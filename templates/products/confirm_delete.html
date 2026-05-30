@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4 text-center">
+      <div class="mb-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+      </div>
+      <h4 class="fw-bold">Confirmer la suppression</h4>
+      <p class="text-muted">Vous allez supprimer <strong>{{ product.name }}</strong>.<br>
+      Cette action supprimera aussi tous ses SKU associés.</p>
+      <form method="post" class="d-flex gap-2 justify-content-center mt-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger px-4">
+          <i class="bi bi-trash me-1"></i>Supprimer
+        </button>
+        <a href="{% url 'product_list' %}" class="btn btn-light px-4">Annuler</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

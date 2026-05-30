@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Statistiques{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-4"><i class="bi bi-bar-chart me-2 text-primary"></i>Statistiques globales</h2>
+
+<!-- Chiffres clés -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card stat-card p-4 text-center">
+      <div class="stat-value">{{ global_stats.total_products }}</div>
+      <div class="text-muted small">Produits total</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card p-4 text-center">
+      <div class="stat-value">{{ global_stats.avg_price|floatformat:2 }} €</div>
+      <div class="text-muted small">Prix moyen</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card p-4 text-center">
+      <div class="stat-value">{{ global_stats.max_price }} €</div>
+      <div class="text-muted small">Prix maximum</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card stat-card p-4 text-center">
+      <div class="stat-value">{{ above_avg }}</div>
+      <div class="text-muted small">Produits au-dessus de la moyenne</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Produits par catégorie -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-folder me-2 text-primary"></i>Produits par catégorie</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Catégorie</th><th class="text-end">Nb produits</th></tr></thead>
+          <tbody>
+            {% for cat in by_category %}
+            <tr>
+              <td>{{ cat.name }}</td>
+              <td class="text-end">
+                <span class="badge bg-primary">{{ cat.nb_products }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 5 produits les plus chers -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-trophy me-2 text-warning"></i>Top 5 — Prix les plus élevés</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Produit</th><th>Catégorie</th><th class="text-end">Prix</th></tr></thead>
+          <tbody>
+            {% for p in top_products %}
+            <tr>
+              <td><a href="{% url 'product_detail' p.pk %}" class="text-decoration-none fw-semibold">{{ p.name }}</a></td>
+              <td><span class="badge-category">{{ p.category.name|default:"—" }}</span></td>
+              <td class="text-end price-tag">{{ p.price }} €</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catégories avec somme > 200€ -->
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2 text-success"></i>Catégories avec valeur catalogue &gt; 200 €</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Catégorie</th><th class="text-end">Somme des prix</th></tr></thead>
+          <tbody>
+            {% for cat in rich_categories %}
+            <tr>
+              <td class="fw-semibold">{{ cat.name }}</td>
+              <td class="text-end price-tag">{{ cat.sum_price|floatformat:2 }} €</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" class="text-center text-muted">Aucune catégorie</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

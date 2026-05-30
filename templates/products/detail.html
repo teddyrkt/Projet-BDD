@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'product_list' %}" class="text-decoration-none text-muted">
+    <i class="bi bi-arrow-left me-1"></i>Retour
+  </a>
+</div>
+
+<div class="row g-4">
+  <!-- Infos produit -->
+  <div class="col-md-5">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <h3 class="fw-bold mb-0">{{ product.name }}</h3>
+        <span class="price-tag fs-4">{{ product.price }} €</span>
+      </div>
+      {% if product.category %}
+        <p class="mb-2"><span class="badge-category">{{ product.category.name }}</span></p>
+      {% endif %}
+      <p class="text-muted">{{ product.description|default:"Aucune description." }}</p>
+      <hr>
+      <p class="small text-muted mb-0"><i class="bi bi-calendar me-1"></i>Ajouté le {{ product.created_at }}</p>
+      <p class="small text-muted mb-0"><i class="bi bi-layers me-1"></i>Stock total : <strong>{{ total_stock }}</strong> unités</p>
+      <div class="d-flex gap-2 mt-3">
+        <a href="{% url 'product_update' product.pk %}" class="btn btn-warning btn-sm">
+          <i class="bi bi-pencil me-1"></i>Modifier
+        </a>
+        <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger btn-sm">
+          <i class="bi bi-trash me-1"></i>Supprimer
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKU & Stock -->
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-tags me-2 text-primary"></i>Variantes (SKU)
+          <span class="badge bg-primary ms-2">{{ skus.count }}</span>
+        </h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>SKU ID</th>
+              <th>Taille</th>
+              <th>Couleur</th>
+              <th>Stocks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sku in skus %}
+            <tr>
+              <td class="text-muted small">#{{ sku.id }}</td>
+              <td><span class="badge bg-secondary">{{ sku.size.name }}</span></td>
+              <td>{{ sku.color.name }}</td>
+              <td>
+                {% for s in sku.stock_set.all %}
+                  <small class="d-block text-muted">{{ s.location.name }} : <strong>{{ s.quantity }}</strong></small>
+                {% empty %}
+                  <small class="text-muted">Aucun stock</small>
+                {% endfor %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">Aucune variante</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
